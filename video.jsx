@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { renderMedia } from "@remotion/player";
+import { renderMedia } from "@websim/remotion/player";
 import { ReplayComposition } from "./ReplayComposition.jsx";
 let root = null;
 const FPS = 60;
