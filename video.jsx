@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { renderMedia } from "@websim/remotion/player";
+import { render } from "@remotion/renderer";
 import { ReplayComposition } from "./ReplayComposition.jsx";
 let root = null;
 const FPS = 60;
@@ -10,7 +10,7 @@ async function renderAndDownloadReplay(replayData, onProgress, onFinish) {
   const compositionWidth = 540;
   const compositionHeight = 960;
   try {
-    const blob = await renderMedia({
+    const blob = await render({
       component: ReplayComposition,
       durationInFrames,
       fps: FPS,
