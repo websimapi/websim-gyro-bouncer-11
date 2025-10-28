@@ -2,8 +2,7 @@ import { Player as GamePlayer } from "./player.js";
 import { PlatformManager } from "./platforms.js";
 import { Controls } from "./controls.js";
 import { Replay } from "./replay.js";
-import { renderReplayVideo, unmountReplayVideo } from "./video.jsx";
-import { downloadFile } from "./download.js";
+import { renderAndDownloadReplay } from "./video.jsx";
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 const replayCanvas = document.getElementById("replay-canvas");
@@ -20,13 +19,12 @@ const highScoreEl = document.getElementById("high-score");
 const downloadReplayButton = document.getElementById("download-replay-button");
 const videoModal = document.getElementById("video-modal");
 const closeVideoModalButton = document.getElementById("close-video-modal-button");
-const renderAndDownloadButton = document.getElementById("render-and-download-button");
-const videoModalMessage = document.getElementById("video-modal-message");
 let player, platformManager, replay;
 let cameraY = 0;
 let score = 0;
 let gameState = "start";
 let lastTime = 0;
+let isRendering = false;
 const platformImg = new Image();
 platformImg.src = "platform.png";
 let userAvatarImg = null;
@@ -229,37 +227,37 @@ restartButton.addEventListener("click", () => {
   lastTime = 0;
   init();
 });
-let lastRenderedBlob = null;
 downloadReplayButton.addEventListener("click", () => {
+  if (isRendering) {
+    alert("A render is already in progress.");
+    return;
+  }
   if (!replay || replay.frames.length === 0) {
     alert("No replay data available.");
     return;
   }
-  videoModal.classList.remove("hidden");
-  renderAndDownloadButton.classList.add("hidden");
-  videoModalMessage.textContent = "Rendering video... Please wait.";
-  lastRenderedBlob = null;
-  renderReplayVideo({
-    frames: replay.frames,
-    avatarImgSrc: userAvatarImg.src,
-    platformImgSrc: platformImg.src,
-    canvasWidth: canvas.width
-  }, (blob) => {
-    lastRenderedBlob = blob;
-    videoModalMessage.textContent = "Video rendered! Ready to download.";
-    renderAndDownloadButton.classList.remove("hidden");
-  });
-});
-renderAndDownloadButton.addEventListener("click", () => {
-  if (lastRenderedBlob) {
-    downloadFile(lastRenderedBlob, "gyro-bouncer-replay.mp4");
-  } else {
-    alert("Video not rendered yet. Please wait.");
-  }
+  isRendering = true;
+  downloadReplayButton.classList.add("rendering");
+  downloadReplayButton.title = "Rendering... Please wait.";
+  renderAndDownloadReplay(
+    {
+      frames: replay.frames,
+      avatarImgSrc: userAvatarImg.src,
+      platformImgSrc: platformImg.src,
+      canvasWidth: canvas.width
+    },
+    (progress) => {
+      console.log(`Rendering progress: ${Math.round(progress * 100)}%`);
+      downloadReplayButton.title = `Rendering... ${Math.round(progress * 100)}%`;
+    },
+    () => {
+      isRendering = false;
+      downloadReplayButton.classList.remove("rendering");
+      downloadReplayButton.title = "Download Replay";
+    }
+  );
 });
 closeVideoModalButton.addEventListener("click", () => {
   videoModal.classList.add("hidden");
-  unmountReplayVideo();
-  lastRenderedBlob = null;
 });
 main();

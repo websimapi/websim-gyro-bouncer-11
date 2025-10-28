@@ -129,10 +129,6 @@ body, html {
     margin-top: 15px;
 }
 
-#video-modal button {
-    margin-top: 10px;
-}
-
 #video-player-container {
     width: 100%;
     max-width: 400px;

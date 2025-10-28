@@ -1,58 +1,45 @@
-import { jsxDEV } from "react/jsx-dev-runtime";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { Player } from "@websim/remotion/player";
+import { Player, renderMedia } from "@websim/remotion/player";
 import { ReplayComposition } from "./ReplayComposition.jsx";
 let root = null;
 const FPS = 60;
-function renderReplayVideo(replayData) {
-  const container = document.getElementById("video-player-container");
-  if (!container) return;
+async function renderAndDownloadReplay(replayData, onProgress, onFinish) {
   const totalDurationSeconds = replayData.frames.reduce((total, frame) => total + frame.dt, 0);
   const durationInFrames = Math.ceil(totalDurationSeconds * FPS);
   const compositionWidth = 540;
   const compositionHeight = 960;
-  if (!root) {
-    root = createRoot(container);
-  }
-  root.render(
-    /* @__PURE__ */ jsxDEV(
-      Player,
-      {
-        component: ReplayComposition,
-        durationInFrames,
-        fps: FPS,
-        compositionWidth,
-        compositionHeight,
-        loop: true,
-        controls: true,
-        autoplay: true,
-        style: { width: "100%", height: "100%" },
-        inputProps: {
-          frames: replayData.frames,
-          avatarImgSrc: replayData.avatarImgSrc,
-          platformImgSrc: replayData.platformImgSrc,
-          canvasWidth: replayData.canvasWidth
-        }
+  try {
+    const blob = await renderMedia({
+      component: ReplayComposition,
+      durationInFrames,
+      fps: FPS,
+      compositionWidth,
+      compositionHeight,
+      inputProps: {
+        frames: replayData.frames,
+        avatarImgSrc: replayData.avatarImgSrc,
+        platformImgSrc: replayData.platformImgSrc,
+        canvasWidth: replayData.canvasWidth
       },
-      void 0,
-      false,
-      {
-        fileName: "<stdin>",
-        lineNumber: 24,
-        columnNumber: 5
-      },
-      this
-    )
-  );
-}
-function unmountReplayVideo() {
-  if (root) {
-    root.unmount();
-    root = null;
+      codec: "h264",
+      onProgress: (p) => onProgress(p.progress)
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "gyro-bouncer-replay.mp4";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Error rendering video:", err);
+    alert("Sorry, there was an error rendering your replay video.");
+  } finally {
+    onFinish();
   }
 }
 export {
-  renderReplayVideo,
-  unmountReplayVideo
+  renderAndDownloadReplay
 };
