@@ -1,0 +1,181 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    background-color: #1a1a1a;
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    font-size: clamp(16px, 2.5vw, 22px);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: #3d5a80;
+}
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    pointer-events: none; /* Allow clicks to pass through to canvas if needed */
+    padding: 15px; /* Add some padding to avoid elements hitting screen edges */
+}
+
+.hidden {
+    display: none !important;
+}
+
+.ui-panel {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    pointer-events: auto; /* Re-enable pointer events for these elements */
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#start-screen {
+    justify-content: center;
+}
+
+#game-over-screen {
+    max-height: 95vh;
+    padding: clamp(5px, 2vh, 10px);
+    justify-content: space-around;
+}
+
+#replay-container {
+    position: relative;
+    display: flex; /* Helps in centering canvas if needed */
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: 40vh;
+    max-width: 90vw;
+    margin-bottom: 5px;
+}
+
+#replay-canvas {
+    width: auto; /* Let height and aspect ratio determine width */
+    height: 100%; /* Fill the container's height */
+    max-width: 100%; /* Don't overflow the container */
+    aspect-ratio: 9 / 16;
+    background-color: #3d5a80;
+    border-radius: 5px;
+    margin-bottom: 0;
+    border: 2px solid #98c1d9;
+}
+
+#download-replay-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#download-replay-button img {
+    width: 100%;
+    height: 100%;
+}
+
+#video-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#video-modal p {
+    margin-top: 15px;
+}
+
+#video-player-container {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    aspect-ratio: 9/16;
+}
+
+#close-video-modal-button {
+    margin-top: 20px;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 1.8em;
+    color: #ee6c4d;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 1.1em;
+    cursor: pointer;
+    background-color: #e0fbfc;
+    border: none;
+    border-radius: 5px;
+    color: #293241;
+    font-weight: bold;
+    margin-top: 0;
+}
+
+.permission-info {
+    font-size: 0.8em;
+    color: #98c1d9;
+    margin-top: 15px;
+}
+
+#score-display {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.5em;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#game-over-screen p {
+    font-size: 1em;
+    margin: 2px 0;
+}
